@@ -1,15 +1,24 @@
-CC = gcc
-CFLAGS = -W -Wall -ansi -pedantic
-LDFLAGS=
-EXEC = grille
+CC=gcc
+CFLAGS=-Wall -Wextra -ansi 
+EXEC=grille
 
 all: $(EXEC)
+
+#grille: grille.o main.o maintest.o
 grille: grille.o main.o
-$(CC) -o grille grille.o main.o $(LDFLAGS)
+	$(CC) -o $@ $^ 
+
 grille.o: grille.c
-$(CC) -o grille.o -c grille.c $(CFLAGS)
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
 main.o: main.c grille.h
-$(CC) -o main.o -c main.c $(CFLAGS)
-clean: rm -rf *.o
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
+#maintest.o: maintest.c grille.h
+#	$(CC) -o $@ -c $< $(CFLAGS)
+
+clean:
+	rm -rf *.o
+
 mrproper: clean
- rm -rf $(EXEC)
+	rm -rf $(EXEC)
