@@ -1,13 +1,7 @@
 
 #ifndef GRILLE_H_INCLUDED
 #define GRILLE_H_INCLUDED
-/*typedef enum Color Color;
-enum Color
-{B,V,R,J,M,G
-};
-*/
-//char** grille;
-//
+
 /**
  * \file          module_modeleVoiture.c
  * \author    Miroslav
@@ -29,6 +23,8 @@ enum Color
  * \return une matrice de caractères*/
 
 char ** faire_alocation_matrice(int largeur,char **grille);
+
+
 /**
 *\brief fait le remplissage de matrice
 *\details realise l'initialisation de la grille à partir de valeurs aléatoires
@@ -36,7 +32,10 @@ char ** faire_alocation_matrice(int largeur,char **grille);
 *\param largeur designe la taille de la matrice carré
 *\return une matrice de caractères
 */
+
 void faire_saisie_matrice(int largeur,char **grille);
+
+
 /**
 *\brief fait l'affichage de toute la matrice
 *\details on réalise le parcours de toute la grille et on fait
@@ -46,8 +45,8 @@ deux boucle afin qu'on puisse afficher tous les caractères entrées dans la gri
 *\return pas de retour seulement un affichage
 */
 
-
 void affiche(int largeur,char ** grille);
+
 
 /**
 *\brief fait la libération de l'espace alloué
@@ -59,6 +58,7 @@ void affiche(int largeur,char ** grille);
 
 void faire_liberation_matrice(int largeur,char **grille);
 
+
 /**
 *\brief remplacement d'une couleur par une autre couleur
 *\details on donne en entrée les coordonnés de la case à modifier et en sortie
@@ -69,7 +69,10 @@ elle donne une novelle matrice contenant la modification
 *\param le troisième paramètre designe les coordonnées du point à modifier
 *\return n'a pas de retour
 */
-void remplacer_matrice(char **grille,char c,int x, int y);
+
+int remplacer_matrice(char **grille,char c,int x, int y, int largeur);
+
+
 /**
 *\brief identifie les compsantes connexes d'une case passé en argument
 *\details prend une matrice de couleur et sa largeur ainsi qu'une
@@ -79,12 +82,12 @@ cordonnée d'une case et retourne le nombre de composantes connexes
 *\param le troisième paramètre designe les coordonnées du point à modifier
 *\param le troisième paramètre designe les coordonnées du point à modifier
 *\param nb designe le nombre de composants connexes
+*\param largeur designe la largeur de la matrice
 *\return un tableau contenant les coordonnées des composantes connexes
 */
 
-
-
 int ** connexite_matrice(char **grille,int largeur,int x, int y, int  * nb);
+
 
 /**
 *\brief realise le remplissage de la matrice à partir d'un fichier
@@ -95,11 +98,8 @@ int ** connexite_matrice(char **grille,int largeur,int x, int y, int  * nb);
 *\return n'a pas de retour
 */
 
-
-
-
-
 void lecture(char ** grille, int largeur);
+
 
 /**
 *\brief fait le changement de couleur de toutes les cases de la matrice
@@ -114,4 +114,17 @@ et ses composants connexes par la nouvelle couleur c
 */
 
 void changement_couleur(char **grille,char c,int x, int y,int largeur);
+
+
+/**
+*\brief verifie si le joueur a gagne
+*\details verifie la victoire en faisant une comparation pour verifier si toutes les cases ont le meme couleur
+*\param grille c'est une matrice de caractères et chaque caractère designe une couleur
+*\param largeur designe la taille de la matrice carré
+*\return 1 (true) si le joueur a gagne ou 0 (false) si il n'ai pas gagne
+*/
+
+int verifie_victoire(char** grille, int largeur);
+
+
 #endif
