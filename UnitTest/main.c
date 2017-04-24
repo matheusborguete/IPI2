@@ -103,6 +103,99 @@ void test_faire_saisie_matrice(void)
 			}
 }
 
+
+char** lecture (char ** grille, int largeur, char* fichier)
+{
+  FILE * fd;
+  int i,j;
+
+  fd= fopen (fichier,"r+");
+
+  if((largeur != 12) && (largeur != 18) && (largeur != 24))
+  	return NULL;
+
+  if(fd == NULL)
+  {
+    printf("Probleme: Erreur au ouvrir le fichier \n");
+    return NULL;
+  }
+
+  else 
+    { 
+      grille = faire_alocation_matrice(largeur,grille);
+      for (i =0; i<largeur;i++)
+        {
+          grille[i] = (char *) calloc (largeur, sizeof(char *));
+        }
+      char ch [128];
+      for (i =0; i<largeur;i++)
+      {
+        fgets(ch,sizeof(ch),fd);
+        for( j =0; j<largeur;j++)
+        {
+          if((ch[j] != 'B') && (ch[j] != 'R') && (ch[j] != 'V') && (ch[j] != 'J') && (ch[j] != 'M') && (ch[j] != 'G'))
+          	return NULL;
+
+          grille[i][j]=ch[j];
+        }
+      }
+      
+      fclose(fd);
+      return grille;
+    }
+}
+
+void test_lecture(void)
+{
+	char** grille = NULL;
+	int taille = 12, i, j;
+	grille = faire_alocation_matrice(taille, grille);
+
+	grille = lecture(grille, taille, "txtbon.txt");
+	
+	for(i=0; i<taille; i++)
+		for(j=0; j<taille; j++)
+			{
+				if(grille[i][j] == 'B')	
+				{
+					CU_ASSERT_PTR_EQUAL(grille[i][j], 'B');
+				}
+				else if (grille[i][j] == 'V')	
+				{
+					CU_ASSERT_PTR_EQUAL(grille[i][j], 'V');
+				}
+				else if (grille[i][j] == 'R')	
+					{
+						CU_ASSERT_PTR_EQUAL(grille[i][j], 'R');
+					}
+				else if (grille[i][j] == 'J')	
+					{
+						CU_ASSERT_PTR_EQUAL(grille[i][j], 'J');
+					}
+				else if (grille[i][j] == 'M')	
+					{
+						CU_ASSERT_PTR_EQUAL(grille[i][j], 'M');
+					}
+				else 
+					CU_ASSERT_PTR_EQUAL(grille[i][j], 'G');
+			}
+
+			grille = lecture(grille, 33, "txtbon.txt");
+			CU_ASSERT_PTR_NULL(grille);
+			grille = lecture(grille, -33, "txtbon.txt");
+			CU_ASSERT_PTR_NULL(grille);
+			grille = lecture(grille, 0, "txtbon.txt");
+			CU_ASSERT_PTR_NULL(grille);
+			grille = lecture(grille, 'v', "txtbon.txt");
+			CU_ASSERT_PTR_NULL(grille);
+
+			grille = lecture(grille, taille, "txtmauvais.txt");
+			CU_ASSERT_PTR_NULL(grille);
+
+			CU_ASSERT_PTR_NULL(lecture(grille, taille, "quelquechose.txt"));
+}
+
+
 void faire_liberation_matrice(int largeur,char ** grille)
 {
     int i;
@@ -236,7 +329,88 @@ void test_verifie_victoire(void)
 	CU_ASSERT_EQUAL(tmp, 0);
 }
 
+int **  connexite_matrice(int largeur,int x, int y,  int * nb)
+{
+  int ** tab;
+  int i;
+  
+  tab=malloc(2 * sizeof(int *));
+  
+  for(i=0;i<2;i++)
+  {
+    tab[i]=malloc(4* sizeof(int *));
+  }
 
+  int j=0;
+  if(y-1>=0)
+  {
+    tab[0][j]=x;
+    tab[1][j]=y-1;
+    j++;
+  }
+
+  if(y+1<largeur)
+  {
+    tab[0][j]=x;
+    tab[1][j]=y+1;
+    j++;
+  }
+
+  if(x-1>=0)
+  {
+    tab[0][j]=x-1;
+    tab[1][j]=y;
+    j++;
+  }
+
+  if(x+1<largeur)
+  {
+    tab[0][j]=x+1;
+    tab[1][j]=y;
+    j++;
+  }
+
+  *nb=j;
+
+  return tab;
+}
+
+void test_connexite_matrice(void)
+{
+
+}
+
+void changement_couleur(char **grille,char c,int x, int y,int largeur)
+{
+  int i;
+
+  if(grille[x][y]!=c)
+  {
+    int ** tab;
+    int * nb=malloc(sizeof(int ));
+
+    tab=connexite_matrice(largeur,x,y,nb);
+    for(i=0; i<nb; i++)
+    {
+      if((grille[tab[0][i]][tab[1][i]]!=c)&&(grille[x][y]==grille[tab[0][i]][tab[1][i]]))
+      {
+        remplacer_matrice(grille,c,tab[0][i],tab[1][i], largeur);
+      }
+    }
+
+  remplacer_matrice(grille,c,x,y, largeur);
+  }
+}
+
+void test_changement_couleur(void)
+{
+	int i, j;
+	char** grille = NULL;
+	grille = faire_alocation_matrice(12, grille);
+	faire_saisie_matrice(taille, grille);
+
+		
+}
 int main() {
 	CU_pSuite pSuite = NULL;
 	
@@ -281,6 +455,10 @@ int main() {
         return CU_get_error();
     }
 
+	if (CU_add_test (pSuite, "test of lecture()",test_lecture)==NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     /*CU_cleanup_registry();*/

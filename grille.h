@@ -86,7 +86,7 @@ cordonnée d'une case et retourne le nombre de composantes connexes
 *\return un tableau contenant les coordonnées des composantes connexes
 */
 
-int ** connexite_matrice(char **grille,int largeur,int x, int y, int  * nb);
+int ** connexite_matrice(int largeur, int x, int y, int  * nb);
 
 
 /**
@@ -98,7 +98,7 @@ int ** connexite_matrice(char **grille,int largeur,int x, int y, int  * nb);
 *\return n'a pas de retour
 */
 
-void lecture(char ** grille, int largeur);
+char** lecture(char ** grille, int largeur, char* fichier);
 
 
 /**
@@ -110,7 +110,7 @@ et ses composants connexes par la nouvelle couleur c
 *\param coordoné x de la case
 *\param coordonnée y de la case
 *\param largeur designe la taille de la matrice carré
-*\return n'a pas de retour
+*\return la grille avec les nouvelles valeurs
 */
 
 void changement_couleur(char **grille,char c,int x, int y,int largeur);

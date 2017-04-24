@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include "grille.h"
 
+/*
+  FONCTION faire_alocation_matrice
+  @ensure allocation de memoire
+  @requires int : largeur de la grille, char** la grille
+  @return la grille aprés faire l'allocation de memoire
+*/
 char** faire_alocation_matrice(int largeur,char ** grille)
 {
   int i =0;
@@ -19,6 +25,13 @@ char** faire_alocation_matrice(int largeur,char ** grille)
   return grille;
 }
 
+
+/*
+  FONCTION faire_saisie_matrice
+  @ensure rien
+  @requires int : largeur de la grille, char** : la grille
+  @return rien
+*/
 void faire_saisie_matrice(int largeur,char **grille)
 {
   int N=7;
@@ -38,15 +51,27 @@ void faire_saisie_matrice(int largeur,char **grille)
       }
 }
 
-void lecture (char ** grille, int largeur)
+
+/*
+  FONCTION lecture
+  @ensure prend les couleurs d'un fichier et met sur la grille
+  @requires int : largeur de la grille, char** : la grille
+  @return NULL si il y a eu des problemes ou la grille si tout a bien passe
+*/
+char** lecture (char ** grille, int largeur, char* fichier)
 {
   FILE * fd;
   int i,j;
-  fd= fopen ("txt.txt","r+");
+
+  fd= fopen (fichier,"r+");
+
+  if((largeur != 12) && (largeur != 18) && (largeur != 24))
+    return NULL;
 
   if(fd == NULL)
   {
-    printf("Error opening file\n");
+    printf("Probleme: Erreur au ouvrir le fichier \n");
+    return NULL;
   }
 
   else 
@@ -62,22 +87,24 @@ void lecture (char ** grille, int largeur)
         fgets(ch,sizeof(ch),fd);
         for( j =0; j<largeur;j++)
         {
+          if((ch[j] != 'B') && (ch[j] != 'R') && (ch[j] != 'V') && (ch[j] != 'J') && (ch[j] != 'M') && (ch[j] != 'G'))
+            return NULL;
+
           grille[i][j]=ch[j];
         }
       }
-      for (i=0; i<largeur;i++)
-      {
-        for (j=0; j<largeur;j++)
-        {
-          printf("%c",grille[i][j]);
-        }
-        printf("\n");
-      }
-        fclose(fd);
+      
+      fclose(fd);
+      return grille;
     }
 }
 
-
+/*
+  FONCTION faire_liberation_matrice
+  @ensure libére la memoire destiné a la matrice
+  @requires int : largeur de la grille, char** : la grille
+  @return rien
+*/
 void faire_liberation_matrice(int largeur,char ** grille)
 {
   int i;
@@ -90,6 +117,12 @@ void faire_liberation_matrice(int largeur,char ** grille)
 }
 
 
+/*
+  FONCTION affiche
+  @ensure affiche la matrice (grille)
+  @requires int : largeur de la grille, char** : la grille
+  @return rien
+*/
  void affiche(int largeur,char ** grille)
 {
   int i,j;
@@ -104,6 +137,12 @@ void faire_liberation_matrice(int largeur,char ** grille)
 }
 
 
+/*
+  FONCTION remplacer_matrice
+  @ensure prend la position x et y de la matrice et la remplace avec la couleur c
+  @requires int : largeur de la grille, char** : la grille, char : c, x et y
+  @return 0(false) si il y a eu des problémes ou 1(true) si tout a bien passé
+*/
 int remplacer_matrice(char **grille,char c,int x, int y, int largeur)
 {
   if ((c != 'B') && (c != 'V') && (c != 'R') && (c != 'J') && (c != 'M') && (c != 'G'))
@@ -122,7 +161,10 @@ int remplacer_matrice(char **grille,char c,int x, int y, int largeur)
 
 
 /*
-
+  FONCTION verifie_victoire
+  @ensure verifie si le joueur a gagné
+  @requires int: largeur de la grille, char** : la grille
+  @return 0 si le joueur ne pas gagné ou 1 si il a gagné
 */
 int verifie_victoire(char** grille, int largeur)
 {
@@ -142,7 +184,13 @@ int verifie_victoire(char** grille, int largeur)
 }
 
 
-int **  connexite_matrice(char **grille,int largeur,int x, int y,  int * nb)
+/*
+  FONCTION connexite_matrice
+  @ensure trouve la composant 4-connexe de la grille
+  @requires int : la largeur de la grille, les couleurs x et y, char** la grille, int * nb 
+  @return la composant 4-connexe
+*/
+int **  connexite_matrice(int largeur,int x, int y,  int * nb)
 {
   int ** tab;
   int i;
@@ -189,6 +237,12 @@ int **  connexite_matrice(char **grille,int largeur,int x, int y,  int * nb)
 }
 
 
+/*
+  FONCTION changement_couleur
+  @ensure change la couleur de la composant 4-fonnexe
+  @requires int : largeur de la grille, x et y, char** : grille,et la char la couleur c
+  @return rien
+*/
 void changement_couleur(char **grille,char c,int x, int y,int largeur)
 {
   int i;
@@ -198,7 +252,7 @@ void changement_couleur(char **grille,char c,int x, int y,int largeur)
     int ** tab;
     int * nb=malloc(sizeof(int ));
 
-    tab=connexite_matrice(grille,largeur,x,y,nb);
+    tab=connexite_matrice(largeur,x,y,nb);
     for(i=0; i<nb; i++)
     {
       if((grille[tab[0][i]][tab[1][i]]!=c)&&(grille[x][y]==grille[tab[0][i]][tab[1][i]]))
