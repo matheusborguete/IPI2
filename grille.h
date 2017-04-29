@@ -2,17 +2,6 @@
 #ifndef GRILLE_H_INCLUDED
 #define GRILLE_H_INCLUDED
 
-/**
- * \file          module_modeleVoiture.c
- * \author    Miroslav
- * \version   1.0
- * \date       12 Novembre 2009
- * \brief       Définit les modèles de voiture et leur particularités.
- *
- * \details    Cette classe surcharge les accesseurs standards du module_voiture pour
- *                  convenir aux spécificités des différents modèles possibles.
- */
-
 
 
  /**
@@ -113,7 +102,7 @@ et ses composants connexes par la nouvelle couleur c
 *\return la grille avec les nouvelles valeurs
 */
 
-void changement_couleur(char **grille,char c,int x, int y,int largeur);
+char** changement_couleur(char **grille,char c,int x, int y,int largeur);
 
 
 /**
@@ -126,5 +115,6 @@ void changement_couleur(char **grille,char c,int x, int y,int largeur);
 
 int verifie_victoire(char** grille, int largeur);
 
+void floodFill(int x, int y, char c, char** grille, int largeur, char oldcolor);
 
 #endif
