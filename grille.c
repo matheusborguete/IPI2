@@ -55,7 +55,6 @@ char** faire_alocation_matrice(int largeur,char ** grille)
 */
 void faire_saisie_matrice(int largeur,char **grille)
 {
-  int N=7;
   int randomValue;
   int i =0, j=0;
 
@@ -371,13 +370,13 @@ char** changement_couleur(char **grille,char c,int x, int y,int largeur)
 */
 void floodFill(int x, int y, char c, char** grille, int largeur, char oldcolor)
 {
-  int tmp;
-
   if((x < largeur) && (y < largeur) && (x >= 0) && (y >= 0) && (grille[x][y] != c) && (oldcolor == grille[x][y]))
   {
-    tmp =remplacer_matrice(grille, c, x, y, largeur);
+      remplacer_matrice(grille, c, x, y, largeur);
       floodFill(x+1, y, c, grille, largeur, oldcolor);
       floodFill(x, y+1, c, grille, largeur, oldcolor);
+      floodFill(x-1, y, c, grille, largeur, oldcolor);
+      floodFill(x, y-1, c, grille, largeur, oldcolor);
   }
 }
 
