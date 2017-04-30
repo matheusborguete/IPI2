@@ -116,7 +116,7 @@ char** lecture (char ** grille, int largeur, char* fichier)
 
   if(fd == NULL)
   {
-    printf("Probleme: Erreur au ouvrir le fichier \n");
+    /*printf("Probleme: Erreur au ouvrir le fichier \n");*/
     return NULL;
   }
 
@@ -243,16 +243,22 @@ void test_affiche(void)
 
 }
 
-int remplacer_matrice(char **grille, char c, int x, int y)
+int remplacer_matrice(char **grille,char c,int x, int y, int largeur)
 {
-	if ((c != 'B') && (c != 'V') && (c != 'R') && (c != 'J') && (c != 'M') && (c != 'G'))
-	{
-		return 0;
-	}
+  if ((c != 'B') && (c != 'V') && (c != 'R') && (c != 'J') && (c != 'M') && (c != 'G'))
+  {
+      return 0;
+  }
 
-    grille[x][y]=c;
-    return 1;
+  if ((x > largeur) || (y > largeur) || (y < 0) || (x < 0))
+  {
+    return 0;
+  }
+
+  grille[x][y]=c;
+  return 1;
 }
+
 
 void test_remplacer_matrice(void)
 {
@@ -262,34 +268,34 @@ void test_remplacer_matrice(void)
 
 	int tmp;
 
-	remplacer_matrice(grille, 'B', 1, 1);
-	tmp = remplacer_matrice(grille, 'A', 1, 1);
+	remplacer_matrice(grille, 'B', 1, 1, 12);
+	tmp = remplacer_matrice(grille, 'A', 1, 1, 12);
 
 	CU_ASSERT_PTR_NOT_EQUAL(grille[1][1], 'A');
 	CU_ASSERT_EQUAL(tmp, 0)
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'B');
 
-	remplacer_matrice(grille, 'V', 1, 1);
+	remplacer_matrice(grille, 'V', 1, 1, 12);
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'V');
 
-	remplacer_matrice(grille, 'R', 1, 1);
+	remplacer_matrice(grille, 'R', 1, 1, 12);
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'R');
 	
-	remplacer_matrice(grille, 'J', 1, 1);
+	remplacer_matrice(grille, 'J', 1, 1, 12);
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'J');
 	
-	remplacer_matrice(grille, 'M', 1, 1);
+	remplacer_matrice(grille, 'M', 1, 1, 12);
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'M');
 	
-	remplacer_matrice(grille, 'G', 1, 1);
+	remplacer_matrice(grille, 'G', 1, 1, 12);
 	CU_ASSERT_PTR_EQUAL(grille[1][1], 'G');
 
 	tmp =7;
-	tmp = remplacer_matrice(grille, 3, 1, 1);
+	tmp = remplacer_matrice(grille, 3, 1, 1, 12);
 	CU_ASSERT_EQUAL(tmp, 0);
 
 	tmp = 7;
-	tmp = remplacer_matrice(grille, -3, 1, 1);
+	tmp = remplacer_matrice(grille, -3, 1, 1, 12);
 	CU_ASSERT_EQUAL(tmp, 0);
 }
 
@@ -319,12 +325,12 @@ void test_verifie_victoire(void)
 	for(i=0; i<12; i++)
 		for(j=0; j<!2; j++)
 		{
-			remplacer_matrice(grille, 'B', i, j);
+			remplacer_matrice(grille, 'B', i, j, 12);
 		}
 
 	int tmp = verifie_victoire(grille, 12);
 	CU_ASSERT_EQUAL(tmp, 1);
-	remplacer_matrice(grille, 'J', 1, 1);
+	remplacer_matrice(grille, 'J', 1, 1, 12);
 	tmp = verifie_victoire(grille, 12);
 	CU_ASSERT_EQUAL(tmp, 0);
 }
@@ -375,10 +381,7 @@ int **  connexite_matrice(int largeur,int x, int y,  int * nb)
   return tab;
 }
 
-void test_connexite_matrice(void)
-{
 
-}
 
 void changement_couleur(char **grille,char c,int x, int y,int largeur)
 {
@@ -390,7 +393,7 @@ void changement_couleur(char **grille,char c,int x, int y,int largeur)
     int * nb=malloc(sizeof(int ));
 
     tab=connexite_matrice(largeur,x,y,nb);
-    for(i=0; i<nb; i++)
+    for(i=0; i<*nb; i++)
     {
       if((grille[tab[0][i]][tab[1][i]]!=c)&&(grille[x][y]==grille[tab[0][i]][tab[1][i]]))
       {
@@ -402,15 +405,57 @@ void changement_couleur(char **grille,char c,int x, int y,int largeur)
   }
 }
 
-void test_changement_couleur(void)
-{
-	int i, j;
-	char** grille = NULL;
-	grille = faire_alocation_matrice(12, grille);
-	faire_saisie_matrice(taille, grille);
 
-		
+void floodFill(int x, int y, char c, char** grille, int largeur, char oldcolor)
+{
+  if((x < largeur) && (y < largeur) && (x >= 0) && (y >= 0) && (grille[x][y] != c) && (oldcolor == grille[x][y]))
+  {
+      remplacer_matrice(grille, c, x, y, largeur);
+      floodFill(x+1, y, c, grille, largeur, oldcolor);
+      floodFill(x, y+1, c, grille, largeur, oldcolor);
+  }
 }
+
+void test_floodfill(void)
+{
+	char** grille = NULL;
+	int largeur = 12;
+	grille = faire_alocation_matrice(largeur, grille);
+
+	grille = lecture(grille, largeur, "txtfloodfill.txt");
+
+	CU_ASSERT_PTR_EQUAL(grille[0][0], 'B');
+	CU_ASSERT_PTR_EQUAL(grille[0][1], 'G');
+	CU_ASSERT_PTR_EQUAL(grille[1][0], 'V');
+
+	floodFill(0, 0, 'G', grille, largeur, grille[0][0]);
+
+	CU_ASSERT_PTR_EQUAL(grille[0][0], 'G');
+	CU_ASSERT_PTR_EQUAL(grille[0][1], 'G');
+	CU_ASSERT_PTR_NOT_EQUAL(grille[1][0], 'G');
+
+
+	floodFill(0, 0, 'V', grille, largeur, grille[0][0]);
+
+	CU_ASSERT_PTR_EQUAL(grille[0][0], 'V');
+	CU_ASSERT_PTR_EQUAL(grille[0][1], 'V');
+	CU_ASSERT_PTR_EQUAL(grille[1][0], 'V');
+
+
+	floodFill(0, 0, 'B', grille, largeur, grille[0][0]);
+
+	CU_ASSERT_PTR_EQUAL(grille[0][0], 'B');
+	CU_ASSERT_PTR_EQUAL(grille[0][1], 'B');
+	CU_ASSERT_PTR_EQUAL(grille[1][0], 'B');
+	CU_ASSERT_PTR_EQUAL(grille[1][1], 'B');
+	CU_ASSERT_PTR_EQUAL(grille[0][2], 'R');
+	CU_ASSERT_PTR_EQUAL(grille[1][2], 'M');
+	CU_ASSERT_PTR_EQUAL(grille[2][0], 'M');
+	CU_ASSERT_PTR_EQUAL(grille[2][1], 'V');
+	
+}
+
+
 int main() {
 	CU_pSuite pSuite = NULL;
 	
@@ -459,6 +504,12 @@ int main() {
         CU_cleanup_registry();
         return CU_get_error();
     }
+
+    if (CU_add_test (pSuite, "test of floodfill()",test_floodfill)==NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     /*CU_cleanup_registry();*/
