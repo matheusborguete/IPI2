@@ -8,6 +8,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+typedef struct pile
+{
+	char couleur[100];
+	int sommet;
+} pile;
+
 
  /*								*/
  char** faire_alocation_matrice(int largeur,char ** grille)
@@ -455,6 +461,195 @@ void test_floodfill(void)
 	
 }
 
+pile initialise_pile(pile solution)
+{
+  /*Declaration des variables*/
+  int i=0;
+
+  /*Si la case est vide ça valeur est égalle a 'z'*/
+  for(i=0; i<100; i++)
+    solution.couleur[i]='z';
+
+  /*Initialization de la sommet = -1*/
+  solution.sommet=-1;
+
+  return solution;
+}
+
+void test_initialise_pile()
+{
+	pile p = initialise_pile(p);
+	int i=0;
+
+	CU_ASSERT_PTR_EQUAL(p.sommet, -1);
+
+	for(i=0; i<100; i++)
+		CU_ASSERT_EQUAL(p.couleur[i], 'z');
+
+}
+
+pile push(pile solution, char newcolor)
+{
+    /*Taille de la pile = 100*/
+  if(solution.sommet < 999)
+  {
+        solution.sommet+= 1;
+        solution.couleur[solution.sommet] = newcolor;
+  }
+
+  return solution;
+}
+
+void test_push()
+{
+	pile p = initialise_pile(p);
+	int i=0;
+
+	p = push(p, 'c');
+	CU_ASSERT_PTR_EQUAL(p.sommet, 0);
+	CU_ASSERT_PTR_EQUAL(p.couleur[0], 'c');
+	
+	for(i=0; i<100; i++)
+		p = push(p, 'r');	
+
+	for(i=1; i<100; i++)
+		CU_ASSERT_EQUAL(p.couleur[i], 'r');
+
+}
+
+pile pop(pile solution)
+{
+    if(solution.sommet>=0)
+    {
+        if(solution.sommet==0)
+            solution.couleur[0]='z';
+        else
+        {
+            solution.couleur[solution.sommet]='z';
+            solution.sommet-= 1;
+        }
+
+    }
+    else
+        solution.sommet=-1;
+
+    return solution;
+}
+
+void test_pop()
+{
+	pile p = initialise_pile(p);
+	int i=0;
+	
+	for(i=0; i<100; i++)
+		p = push(p, 'r');	
+
+	CU_ASSERT_EQUAL(p.couleur[99], 'r');
+	p = pop(p);
+	CU_ASSERT_EQUAL(p.couleur[99], 'z');
+
+	for(i=98; i>=0; i--)
+	{
+		p = pop(p);
+		CU_ASSERT_EQUAL(p.couleur[i], 'z');
+	}
+
+}
+
+pile uneSolutionTrouvee(pile solution, pile bestsolution)
+{
+  if(bestsolution.sommet == 0)
+    bestsolution = solution;
+  else
+  {
+    if(solution.sommet < bestsolution.sommet)
+      bestsolution = solution;
+  }
+
+  return bestsolution;
+}
+
+
+pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int profundeur)
+{
+  
+    int i;
+    char** g2 = grille;
+    for (i=profundeur; i<6; i++)
+    {
+      printf("%d\n", i);
+        switch(i)
+        {
+            case 0:
+                solution = push(solution,'J');
+                floodFill(0, 0, 'J', g2, largeur, g2[0][0]);
+                break;
+            case 1:
+                solution = push(solution,'B');
+                floodFill(0, 0, 'B', g2, largeur, g2[0][0]);
+                break;
+            case 2:
+                solution = push(solution,'V');
+                floodFill(0, 0, 'V', g2, largeur, g2[0][0]);
+                break;
+            case 3:
+                solution = push(solution,'M');
+                floodFill(0, 0, 'M', g2, largeur, g2[0][0]);
+                break;
+            case 4:
+                solution = push(solution,'R');
+                floodFill(0, 0, 'R', g2, largeur, g2[0][0]);
+                break;
+            case 5:
+                solution = push(solution,'G');
+                floodFill(0, 0, 'G', g2, largeur, g2[0][0]);
+                break;
+        }
+
+        if (verifie_victoire(g2, largeur) == 1)
+        {
+            bestsolution = uneSolutionTrouvee(solution, bestsolution);
+        }
+        else
+        {
+            
+              solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+              solution = pop(solution);
+            
+        }
+    }
+
+  return bestsolution;
+}
+
+
+void copier_matrice(char** grille, char** g2, int largeur)
+{
+  int i=0, j=0;
+
+  for(i=0; i<largeur; i++)
+    for(j=0; j<largeur; j++)
+      g2[i][j]=grille[i][j]; 
+}
+
+void test_copier_matrice()
+{
+	char** grille = NULL;
+	char** g2 = NULL;
+	int largeur = 12, i, j;
+
+	grille = faire_alocation_matrice(largeur, grille);
+	g2 = faire_alocation_matrice(largeur, g2);
+
+	/*Creation des coleurs aleactoires*/
+	faire_saisie_matrice(largeur,grille);
+	copier_matrice(grille, g2, largeur);
+
+	for(i=0; i<largeur; i++)
+    	for(j=0; j<largeur; j++)
+      		CU_ASSERT_EQUAL(grille[i][j], g2[i][j]);
+}
+
 
 int main() {
 	CU_pSuite pSuite = NULL;
@@ -508,6 +703,26 @@ int main() {
     if (CU_add_test (pSuite, "test of floodfill()",test_floodfill)==NULL) {
         CU_cleanup_registry();
         return CU_get_error();
+    }
+
+    if (CU_add_test (pSuite, "test of initialise_pile()",test_initialise_pile)==NULL) {
+	    CU_cleanup_registry();
+	    return CU_get_error();
+    }
+
+    if (CU_add_test (pSuite, "test of push()",test_push)==NULL) {
+	    CU_cleanup_registry();
+	    return CU_get_error();
+    }
+
+    if (CU_add_test (pSuite, "test of pop()",test_pop)==NULL) {
+	    CU_cleanup_registry();
+	    return CU_get_error();
+    }
+
+    if (CU_add_test (pSuite, "test of copier_matrice()",test_copier_matrice)==NULL) {
+	    CU_cleanup_registry();
+	    return CU_get_error();
     }
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
