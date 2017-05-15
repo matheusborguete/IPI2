@@ -14,6 +14,7 @@ int main()
 	int x, y*/
 	int coups, victoire = 0; /*victoire = 1, il a gagne*/
 	char** grille = NULL;
+	/*char** g2; LOT D*/
 	char c, tmp;
 
 
@@ -59,10 +60,20 @@ int main()
 
 		/*Creation de la grille*/
 		grille = faire_alocation_matrice(largeur, grille);
+		/*g2 = faire_alocation_matrice(largeur, g2); LOT D*/
 
 		/*Creation des coleurs aleactoires*/
 		faire_saisie_matrice(largeur,grille);
-	 
+	 	
+	 	/*LOT D
+		
+		pile solution = initialise_pile(solution);
+		pile bestsolution = initialise_pile(solution);
+		copier_matrice(grille, g2, largeur);
+		bestsolution = solveur(g2, largeur,  solution, bestsolution, 0);
+
+	 	*/
+	 	
 	 	/*Boucle du jeu*/
 	 	while((coups > 0) && (victoire != 1))
 	 	{
@@ -72,7 +83,9 @@ int main()
 			/*Afficher la grille et nb coups restants */
 			affiche(largeur, grille);
 			printf("\nNombres de coups restants: %d\n", coups);
-			
+			/*
+			printf("couleur[0]%c\n", bestsolution.couleur[0]);
+			printf("sommet %d\n", bestsolution.sommet); LOT D */
 			/*Selectioner la couleur*/
 			do
 			{	

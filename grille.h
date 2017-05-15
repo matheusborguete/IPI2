@@ -2,6 +2,15 @@
 #ifndef GRILLE_H_INCLUDED
 #define GRILLE_H_INCLUDED
 
+/**
+ * \brief structure pile
+ */
+typedef struct pile
+{
+	char couleur[1000];
+	int sommet;
+} pile;
+
 
 
  /**
@@ -115,6 +124,72 @@ char** changement_couleur(char **grille,char c,int x, int y,int largeur);
 
 int verifie_victoire(char** grille, int largeur);
 
+/**
+*\changement de couleur des cases
+*\param x : entier qui designe la position x
+*\param y : entier qui designe la position y
+*\param c : char qui est la couleur
+*\param grille c'est une matrice de caractères et chaque caractère designe une couleur
+*\param largeur designe la taille de la matrice carré
+*\param oldcolor : char qui est la couleur avant du changement
+*\return 1 (true) si le joueur a gagne ou 0 (false) si il n'ai pas gagne
+*/
 void floodFill(int x, int y, char c, char** grille, int largeur, char oldcolor);
+
+
+
+/**
+*\brief initialise la pile
+*\param pile qui sera initialise
+*\return la pile initialise
+*/
+pile initialise_pile(pile solution);
+
+
+/**
+*\brief fait une inserction dans la pile
+*\param pile qui sera initialise
+*\param newcolor qui sera ajoute dans la pile
+*\return la pile
+*/
+pile push(pile solution, char newcolor);
+
+
+/**
+*\brief retirer le element au sommet de la pile
+*\param pile qui sera initialise
+*\return la pile 
+*/
+pile pop(pile solution);
+
+
+/**
+*\brief verifie si la solution trouve c'est mieux qui la qu'on a trouv´e avant
+*\param solution avec la nouvelesolution
+*\param bestsolution avec la mieux solution
+*\return rien 
+*/
+pile uneSolutionTrouvee(pile solution, pile bestsolution);
+
+/**
+*\brief trouve la mieux solution pour la resolution de la grille
+\*param grille la grille du jeu
+\*param largeur de la grille
+*\param solution avec la nouvelesolution
+*\param bestsolution avec la mieux solution
+*\return rien 
+*/
+pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int profundeur);
+
+
+/**
+*\brief copie une matrice `a autre
+\*param grille la premiere matrice
+\*param g2 la deuxieme matrice
+\*param largeur de la grille
+*\return rien 
+*/
+void copier_matrice(char** grille, char**g2, int largeur);
+
 
 #endif

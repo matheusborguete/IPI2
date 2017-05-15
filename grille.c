@@ -381,3 +381,162 @@ void floodFill(int x, int y, char c, char** grille, int largeur, char oldcolor)
 }
 
 
+/**
+*\brief initialise la pile
+*\param pile qui sera initialise
+*\return la pile initialise
+*/
+pile initialise_pile(pile solution)
+{
+  /*Declaration des variables*/
+  int i=0;
+
+  /*Si la case est vide ça valeur est égalle a 'z'*/
+  for(i=0; i<100; i++)
+    solution.couleur[i]='z';
+
+  /*Initialization de la sommet = -1*/
+  solution.sommet=-1;
+
+  return solution;
+}
+
+/**
+*\brief fait une inserction dans la pile
+*\param pile qui sera initialise
+*\param newcolor qui sera ajoute dans la pile
+*\return la pile
+*/
+pile push(pile solution, char newcolor)
+{
+    /*Taille de la pile = 100*/
+  if(solution.sommet < 999)
+  {
+        solution.sommet+= 1;
+        solution.couleur[solution.sommet] = newcolor;
+  }
+
+  return solution;
+}
+
+/**
+*\brief retirer le element au sommet de la pile
+*\param pile qui sera initialise
+*\return la pile 
+*/
+pile pop(pile solution)
+{
+    if(solution.sommet>=0)
+    {
+        if(solution.sommet==0)
+            solution.couleur[0]='z';
+        else
+        {
+            solution.couleur[solution.sommet]='z';
+            solution.sommet-= 1;
+        }
+
+    }
+    else
+        solution.sommet=-1;
+
+    return solution;
+}
+
+
+/**
+*\brief verifie si la solution trouve c'est mieux qui la qu'on a trouv´e avant
+*\param solution avec la nouvelesolution
+*\param bestsolution avec la mieux solution
+*\return rien 
+*/
+pile uneSolutionTrouvee(pile solution, pile bestsolution)
+{
+  if(bestsolution.sommet == 0)
+    bestsolution = solution;
+  else
+  {
+    if(solution.sommet < bestsolution.sommet)
+      bestsolution = solution;
+  }
+
+  return bestsolution;
+}
+
+
+/**
+*\brief trouve la mieux solution pour la resolution de la grille
+\*param grille la grille du jeu
+\*param largeur de la grille
+*\param solution avec la nouvelesolution
+*\param bestsolution avec la mieux solution
+*\return rien 
+*/
+pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int profundeur)
+{
+  
+    int i;
+    char** g2 = grille;
+    for (i=profundeur; i<6; i++)
+    {
+      printf("%d\n", i);
+        switch(i)
+        {
+            case 0:
+                solution = push(solution,'J');
+                floodFill(0, 0, 'J', g2, largeur, g2[0][0]);
+                break;
+            case 1:
+                solution = push(solution,'B');
+                floodFill(0, 0, 'B', g2, largeur, g2[0][0]);
+                break;
+            case 2:
+                solution = push(solution,'V');
+                floodFill(0, 0, 'V', g2, largeur, g2[0][0]);
+                break;
+            case 3:
+                solution = push(solution,'M');
+                floodFill(0, 0, 'M', g2, largeur, g2[0][0]);
+                break;
+            case 4:
+                solution = push(solution,'R');
+                floodFill(0, 0, 'R', g2, largeur, g2[0][0]);
+                break;
+            case 5:
+                solution = push(solution,'G');
+                floodFill(0, 0, 'G', g2, largeur, g2[0][0]);
+                break;
+        }
+
+        if (verifie_victoire(g2, largeur) == 1)
+        {
+            bestsolution = uneSolutionTrouvee(solution, bestsolution);
+        }
+        else
+        {
+            
+              solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+              solution = pop(solution);
+            
+        }
+    }
+
+  return bestsolution;
+}
+
+
+/**
+*\brief copie une matrice `a autre
+\*param grille la premiere matrice
+\*param g2 la deuxieme matrice
+\*param largeur de la grille
+*\return rien 
+*/
+void copier_matrice(char** grille, char** g2, int largeur)
+{
+  int i=0, j=0;
+
+  for(i=0; i<largeur; i++)
+    for(j=0; j<largeur; j++)
+      g2[i][j]=grille[i][j]; 
+}
