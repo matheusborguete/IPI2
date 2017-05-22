@@ -12,7 +12,7 @@ int main()
 	int largeur;
 	/*FILE * fd;
 	int x, y*/
-	int coups, victoire = 0; /*victoire = 1, il a gagne*/
+	int coups, victoire = 0, dif = 9; /*victoire = 1, il a gagne*/
 	char** grille = NULL;
 	char** g2; /*LOT D*/
 	char c, tmp;
@@ -42,21 +42,19 @@ int main()
 			exit(0);
 		}
 
-		/*Choisir le nombre de coups*/
-		switch(largeur)
+		do
 		{
-			case 12:
-			coups = 21;
-			break;
+			/*Effacement du ecran*/
+			system("clear");
+			printf("Donnez la difficulte (1, 2 ou 3) :\n");
+			printf("1 - Facile : Coups * 3\n");
+			printf("2 - Moyenne : Coups * 2\n");
+			printf("3 - Dificile : Coups * 1\n");
+			__fpurge(stdin);
+			scanf("%d", &dif);
+		}while((dif != 1) && (dif != 2) && (dif != 3));
 
-			case 18:
-			coups = 25;
-			break;
-
-			case 24:
-			coups = 43;
-			break;
-		}
+		
 
 		/*Creation de la grille*/
 		grille = faire_alocation_matrice(largeur, grille);
@@ -71,18 +69,33 @@ int main()
 		pile bestsolution = initialise_pile(solution);
 		copier_matrice(grille, g2, largeur);
 
-           bestsolution =solveur(g2, largeur,  solution, bestsolution, 0);
+       	bestsolution =solveur_Optimal(g2, largeur,  solution, bestsolution, 0);
+       	/*affiche(largeur, g2);*/
 
-        affiche(largeur, g2);
+		/*Choisir le nombre de coups*/
+		coups = bestsolution.sommet;
+
+		switch(dif)
+		{
+			case 1:
+				coups = coups * 3;
+			break;
+			case 2:
+				coups = (int) coups * 2;
+			break;
+			case 3:
+				coups = coups * 1;
+			break;
+		}
 
 	 	/*Boucle du jeu*/
 	 	while((coups > 0) && (victoire != 1))
 	 	{
 	 		/*Effacer l'ecran*/
-		//	system("clear");
+			system("clear"); 
 
 			/*Afficher la grille et nb coups restants */
-        affiche(largeur, grille);
+        	affiche(largeur, grille);
 			printf("\nNombres de coups restants: %d\n", coups);
 
 			printf("couleur[0]%c\n", bestsolution.couleur[0]);

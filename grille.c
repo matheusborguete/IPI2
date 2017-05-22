@@ -485,7 +485,7 @@ pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int p
     char** g2 = grille;
     for (i=0; i<6; i=i+1)
     {
-  //  printf("%d", i);
+  /*  printf("%d", i); */
         switch(i)
         {
             case 0:
@@ -521,22 +521,21 @@ pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int p
 
         if (verifie_victoire(g2, largeur) == 1)
         {
-            bestsolution = uneSolutionTrouvee(solution, bestsolution);
-        solution = pop(solution);
-            largeur = profundeur;
-            continue;
+          bestsolution = uneSolutionTrouvee(solution, bestsolution);
+          solution = pop(solution);
+          largeur = profundeur;
         }
          if(largeur>profundeur )
            solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
         else
         {
 
-             // solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+             /*solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1); */
               solution = pop(solution);
 
         }
     }
-    	//printf("sommet %d\n", bestsolution.sommet);
+    	/*printf("sommet %d\n", bestsolution.sommet); */
   return bestsolution;
 }
 
@@ -557,7 +556,6 @@ void  Puch_Color(char ** g2,int largeur,int x, int y , pile solution){
             solution = push(solution,c);
         }
 
-
     }
 
 }
@@ -577,10 +575,11 @@ pile solveur_Optimal(char** grille, int largeur, pile solution, pile bestsolutio
 
     int i=0;
     char** g2 = grille;
-    Puch_Color(g2,largeur,0,0,solution);
+    /*Puch_Color(g2,largeur,0,0,solution); */
     for (i=0; i<6; i=i+1)
     {
-  //  printf("%d", i);
+  
+    /*printf("i : %d, prof : %d. \t", i, profundeur); */
         switch(i)
         {
             case 0:
@@ -626,12 +625,12 @@ pile solveur_Optimal(char** grille, int largeur, pile solution, pile bestsolutio
         else
         {
 
-             // solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+             /* solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);*/
               solution = pop(solution);
 
         }
     }
-    	//printf("sommet %d\n", bestsolution.sommet);
+    	/*printf("sommet %d\n", bestsolution.sommet); */
   return bestsolution;
 }
 /**
