@@ -106,8 +106,8 @@ char** lecture (char ** grille, int largeur, char* fichier)
     return NULL;
   }
 
-  else 
-    { 
+  else
+    {
       grille = faire_alocation_matrice(largeur,grille);
       for (i =0; i<largeur;i++)
         {
@@ -125,7 +125,7 @@ char** lecture (char ** grille, int largeur, char* fichier)
           grille[i][j]=ch[j];
         }
       }
-      
+
       fclose(fd);
       return grille;
     }
@@ -178,7 +178,7 @@ deux boucle afin qu'on puisse afficher tous les caractères entrées dans la gri
   {
     for( j=0; j<largeur; j++)
       printf("%c  ",grille[i][j]);
-    
+
     printf("\n");
   }
 }
@@ -264,16 +264,16 @@ cordonnée d'une case et retourne le nombre de composantes connexes
 /*
   FONCTION connexite_matrice
   @ensure trouve la composant 4-connexe de la grille
-  @requires int : la largeur de la grille, les couleurs x et y, char** la grille, int * nb 
+  @requires int : la largeur de la grille, les couleurs x et y, char** la grille, int * nb
   @return la composant 4-connexe
 */
 int **  connexite_matrice(int largeur,int x, int y,  int * nb)
 {
   int ** tab;
   int i;
-  
+
   tab=malloc(2 * sizeof(int *));
-  
+
   for(i=0;i<2;i++)
   {
     tab[i]=malloc(4* sizeof(int ));
@@ -341,7 +341,7 @@ char** changement_couleur(char **grille,char c,int x, int y,int largeur)
     int * nb=malloc(sizeof(int ));
 
     tab=connexite_matrice(largeur,x,y,nb);
-    
+
     for(i=0; i<*nb; i++)
     {
       if((grille[tab[0][i]][tab[1][i]]!=c)&&(grille[x][y]==grille[tab[0][i]][tab[1][i]]))
@@ -392,7 +392,7 @@ pile initialise_pile(pile solution)
   int i=0;
 
   /*Si la case est vide ça valeur est égalle a 'z'*/
-  for(i=0; i<100; i++)
+  for(i=0; i<1000; i++)
     solution.couleur[i]='z';
 
   /*Initialization de la sommet = -1*/
@@ -422,7 +422,7 @@ pile push(pile solution, char newcolor)
 /**
 *\brief retirer le element au sommet de la pile
 *\param pile qui sera initialise
-*\return la pile 
+*\return la pile
 */
 pile pop(pile solution)
 {
@@ -444,15 +444,21 @@ pile pop(pile solution)
 }
 
 
+char dernier_Couleur(pile solution)
+{
+    return solution.couleur[solution.sommet];
+
+}
+
 /**
 *\brief verifie si la solution trouve c'est mieux qui la qu'on a trouv´e avant
 *\param solution avec la nouvelesolution
 *\param bestsolution avec la mieux solution
-*\return rien 
+*\return rien
 */
 pile uneSolutionTrouvee(pile solution, pile bestsolution)
 {
-  if(bestsolution.sommet == 0)
+  if(bestsolution.sommet == -1)
     bestsolution = solution;
   else
   {
@@ -470,67 +476,170 @@ pile uneSolutionTrouvee(pile solution, pile bestsolution)
 \*param largeur de la grille
 *\param solution avec la nouvelesolution
 *\param bestsolution avec la mieux solution
-*\return rien 
+*\return rien
 */
 pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int profundeur)
 {
-  
-    int i;
+
+    int i=0;
     char** g2 = grille;
-    for (i=profundeur; i<6; i++)
+    for (i=0; i<6; i=i+1)
     {
-      printf("%d\n", i);
+  //  printf("%d", i);
         switch(i)
         {
             case 0:
-                solution = push(solution,'J');
-                floodFill(0, 0, 'J', g2, largeur, g2[0][0]);
+             if ((dernier_Couleur(solution)!='J')||(solution.sommet==-1))
+                {solution = push(solution,'J');
+                floodFill(0, 0, 'J', g2, largeur, g2[0][0]);}
                 break;
-            case 1:
-                solution = push(solution,'B');
-                floodFill(0, 0, 'B', g2, largeur, g2[0][0]);
+            case 1: if ((dernier_Couleur(solution)!='B')||(solution.sommet!=-1))
+                {solution = push(solution,'B');
+                floodFill(0, 0, 'B', g2, largeur, g2[0][0]);}
                 break;
             case 2:
-                solution = push(solution,'V');
-                floodFill(0, 0, 'V', g2, largeur, g2[0][0]);
+             if ((dernier_Couleur(solution)!='V')||(solution.sommet!=-1))
+               { solution = push(solution,'V');
+                floodFill(0, 0, 'V', g2, largeur, g2[0][0]);}
                 break;
             case 3:
-                solution = push(solution,'M');
-                floodFill(0, 0, 'M', g2, largeur, g2[0][0]);
+             if ((dernier_Couleur(solution)!='M')||(solution.sommet!=-1))
+              { solution = push(solution,'M');
+                floodFill(0, 0, 'M', g2, largeur, g2[0][0]);}
                 break;
             case 4:
-                solution = push(solution,'R');
+             if ((dernier_Couleur(solution)!='R')||(solution.sommet!=-1))
+              {  solution = push(solution,'R');
                 floodFill(0, 0, 'R', g2, largeur, g2[0][0]);
-                break;
+                }break;
             case 5:
-                solution = push(solution,'G');
-                floodFill(0, 0, 'G', g2, largeur, g2[0][0]);
+             if ((dernier_Couleur(solution)!='G')||(solution.sommet!=-1))
+               { solution = push(solution,'G');
+                floodFill(0, 0, 'G', g2, largeur, g2[0][0]);}
                 break;
         }
 
         if (verifie_victoire(g2, largeur) == 1)
         {
             bestsolution = uneSolutionTrouvee(solution, bestsolution);
+        solution = pop(solution);
+            largeur = profundeur;
+            continue;
         }
+         if(largeur>profundeur )
+           solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
         else
         {
-            
-              solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+
+             // solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
               solution = pop(solution);
-            
+
         }
     }
-
+    	//printf("sommet %d\n", bestsolution.sommet);
   return bestsolution;
 }
 
 
+void  Puch_Color(char ** g2,int largeur,int x, int y , pile solution){
+    char c = g2[0][0] ;
+    if((x >= 0) && (x < largeur) && (y >= 0) && (y < largeur)
+       && (g2[x][y] == c ))
+    {
+
+        Puch_Color(g2,largeur, x + 1, y,solution);
+        Puch_Color(g2,largeur, x , y + 1,solution);
+
+    }
+    else if (x >= 0 && x < largeur && y >= 0 && y < largeur
+             && g2[x][y] != c){
+        if(solution.sommet==1){
+            solution = push(solution,c);
+        }
+
+
+    }
+
+}
+
+
+
+/**SOLVEUR_OPTIMISER
+*\brief trouve la mieux solution pour la resolution de la grille
+\*param grille la grille du jeu
+\*param largeur de la grille
+*\param solution avec la nouvelesolution
+*\param bestsolution avec la mieux solution
+*\return rien
+*/
+pile solveur_Optimal(char** grille, int largeur, pile solution, pile bestsolution, int profundeur)
+{
+
+    int i=0;
+    char** g2 = grille;
+    Puch_Color(g2,largeur,0,0,solution);
+    for (i=0; i<6; i=i+1)
+    {
+  //  printf("%d", i);
+        switch(i)
+        {
+            case 0:
+             if ((dernier_Couleur(solution)!='J')||(solution.sommet==-1))
+                {solution = push(solution,'J');
+                floodFill(0, 0, 'J', g2, largeur, g2[0][0]);}
+                break;
+            case 1: if ((dernier_Couleur(solution)!='B')||(solution.sommet!=-1))
+                {solution = push(solution,'B');
+                floodFill(0, 0, 'B', g2, largeur, g2[0][0]);}
+                break;
+            case 2:
+             if ((dernier_Couleur(solution)!='V')||(solution.sommet!=-1))
+               { solution = push(solution,'V');
+                floodFill(0, 0, 'V', g2, largeur, g2[0][0]);}
+                break;
+            case 3:
+             if ((dernier_Couleur(solution)!='M')||(solution.sommet!=-1))
+              { solution = push(solution,'M');
+                floodFill(0, 0, 'M', g2, largeur, g2[0][0]);}
+                break;
+            case 4:
+             if ((dernier_Couleur(solution)!='R')||(solution.sommet!=-1))
+              {  solution = push(solution,'R');
+                floodFill(0, 0, 'R', g2, largeur, g2[0][0]);
+                }break;
+            case 5:
+             if ((dernier_Couleur(solution)!='G')||(solution.sommet!=-1))
+               { solution = push(solution,'G');
+                floodFill(0, 0, 'G', g2, largeur, g2[0][0]);}
+                break;
+        }
+
+        if (verifie_victoire(g2, largeur) == 1)
+        {
+            bestsolution = uneSolutionTrouvee(solution, bestsolution);
+        solution = pop(solution);
+            largeur = profundeur;
+            continue;
+        }
+         if(largeur>profundeur )
+           solution =solveur_Optimal(g2, largeur, solution,  bestsolution, profundeur+1);
+        else
+        {
+
+             // solution = solveur(g2, largeur, solution,  bestsolution, profundeur+1);
+              solution = pop(solution);
+
+        }
+    }
+    	//printf("sommet %d\n", bestsolution.sommet);
+  return bestsolution;
+}
 /**
 *\brief copie une matrice `a autre
 \*param grille la premiere matrice
 \*param g2 la deuxieme matrice
 \*param largeur de la grille
-*\return rien 
+*\return rien
 */
 void copier_matrice(char** grille, char** g2, int largeur)
 {
@@ -538,5 +647,5 @@ void copier_matrice(char** grille, char** g2, int largeur)
 
   for(i=0; i<largeur; i++)
     for(j=0; j<largeur; j++)
-      g2[i][j]=grille[i][j]; 
+      g2[i][j]=grille[i][j];
 }

@@ -14,28 +14,28 @@ int main()
 	int x, y*/
 	int coups, victoire = 0; /*victoire = 1, il a gagne*/
 	char** grille = NULL;
-	/*char** g2; LOT D*/
+	char** g2; /*LOT D*/
 	char c, tmp;
 
 
-	
+
 	/*Boucle du jeu*/
 	do
 	{
 		/*Effacement du ecran*/
 		system("clear");
-		
+
 		/*Message de bienvenue*/
 		printf("BIENVENUE AU COLOR FLOOD!\n\n");
 
-		/*Demande de la largeur au utilisateur*/ 
+		/*Demande de la largeur au utilisateur*/
 		do
 		{
 			__fpurge(stdin);
 			printf("Donnez la largeur entre 12, 18 ou 24 ou 99 pour sortir du jeu : \n");
 			scanf("%d", &largeur);
 		}while((largeur != 12) && (largeur != 18) && (largeur != 24) && (largeur != 99));
-		
+
 		/*Pour sortir du jeu*/
 		if(largeur == 99)
 		{
@@ -60,35 +60,36 @@ int main()
 
 		/*Creation de la grille*/
 		grille = faire_alocation_matrice(largeur, grille);
-		/*g2 = faire_alocation_matrice(largeur, g2); LOT D*/
+		g2 = faire_alocation_matrice(largeur, g2);/* LOT D*/
 
 		/*Creation des coleurs aleactoires*/
 		faire_saisie_matrice(largeur,grille);
-	 	
-	 	/*LOT D
-		
+
+	 	/*LOT D*/
+
 		pile solution = initialise_pile(solution);
 		pile bestsolution = initialise_pile(solution);
 		copier_matrice(grille, g2, largeur);
-		bestsolution = solveur(g2, largeur,  solution, bestsolution, 0);
 
-	 	*/
-	 	
+           bestsolution =solveur(g2, largeur,  solution, bestsolution, 0);
+
+        affiche(largeur, g2);
+
 	 	/*Boucle du jeu*/
 	 	while((coups > 0) && (victoire != 1))
 	 	{
 	 		/*Effacer l'ecran*/
-			system("clear");
+		//	system("clear");
 
 			/*Afficher la grille et nb coups restants */
-			affiche(largeur, grille);
+        affiche(largeur, grille);
 			printf("\nNombres de coups restants: %d\n", coups);
-			/*
+
 			printf("couleur[0]%c\n", bestsolution.couleur[0]);
-			printf("sommet %d\n", bestsolution.sommet); LOT D */
+			printf("sommet %d\n", bestsolution.sommet); /*LOT D */
 			/*Selectioner la couleur*/
 			do
-			{	
+			{
 				__fpurge(stdin);
 				printf("\n Selectioner les couleurs entre J, M, V, B, R et G : ");
 				scanf("%c", &tmp);
@@ -96,7 +97,7 @@ int main()
 
 			}
 			while((c != 'B') && (c != 'V') && (c != 'R') && (c != 'J') && (c != 'M') && (c != 'G'));
-			
+
 			/*Changement de couleur */
 			floodFill(0, 0, c, grille, largeur, grille[0][0]);
 
@@ -127,7 +128,7 @@ int main()
 			printf("\n Vous avez gagne! =) \n");
 		}
 		faire_liberation_matrice(largeur, grille);
-
+        faire_liberation_matrice(largeur, g2);
 		/*Attendre quelque case pour recommencer le jeu*/
 		__fpurge(stdin);
 		scanf("%c", &c);

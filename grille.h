@@ -158,7 +158,7 @@ pile push(pile solution, char newcolor);
 /**
 *\brief retirer le element au sommet de la pile
 *\param pile qui sera initialise
-*\return la pile 
+*\return la pile
 */
 pile pop(pile solution);
 
@@ -167,7 +167,7 @@ pile pop(pile solution);
 *\brief verifie si la solution trouve c'est mieux qui la qu'on a trouv´e avant
 *\param solution avec la nouvelesolution
 *\param bestsolution avec la mieux solution
-*\return rien 
+*\return rien
 */
 pile uneSolutionTrouvee(pile solution, pile bestsolution);
 
@@ -177,7 +177,7 @@ pile uneSolutionTrouvee(pile solution, pile bestsolution);
 \*param largeur de la grille
 *\param solution avec la nouvelesolution
 *\param bestsolution avec la mieux solution
-*\return rien 
+*\return rien
 */
 pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int profundeur);
 
@@ -187,9 +187,9 @@ pile solveur(char** grille, int largeur, pile solution, pile bestsolution, int p
 \*param grille la premiere matrice
 \*param g2 la deuxieme matrice
 \*param largeur de la grille
-*\return rien 
+*\return rien
 */
 void copier_matrice(char** grille, char**g2, int largeur);
-
+pile solveur_Optimal(char** grille, int largeur, pile solution, pile bestsolution, int profundeur);
 
 #endif
