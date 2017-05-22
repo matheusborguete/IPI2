@@ -95,9 +95,8 @@ int main()
 			/*Afficher la grille et nb coups restants */
         	affiche(largeur, grille);
 			printf("\nNombres de coups restants: %d\n", coups);
-
-			printf("couleur[0]%c\n", bestsolution.couleur[0]);
-			printf("sommet %d\n", bestsolution.sommet); /*LOT D */
+			 /*LOT D */
+			
 			/*Selectioner la couleur*/
 			do
 			{
@@ -138,10 +137,9 @@ int main()
 		{
 			printf("\n Vous avez gagne! =) \n");
 		}
-		int o, t;
-		for(o=0;o<largeur;o++)
-			for(t=0;t<largeur;t++)
-				grille[o][t]='a';
+		
+		/*Liberation de memoire*/
+		
 		faire_liberation_matrice(largeur, grille);
         faire_liberation_matrice(largeur, g2);
 		/*Attendre quelque case pour recommencer le jeu*/
