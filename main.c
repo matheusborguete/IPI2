@@ -8,20 +8,18 @@ void __fpurge();
 
 int main()
 {
-	/*Creation des variables*/
-	int largeur;
-	/*FILE * fd;
-	int x, y*/
-	int coups, victoire = 0, dif = 9; /*victoire = 1, il a gagne*/
-	char** grille = NULL;
-	char** g2; /*LOT D*/
-	char c, tmp;
-
-
-
 	/*Boucle du jeu*/
 	do
 	{
+		/*Creation des variables*/
+		int largeur;
+		/*FILE * fd;
+		int x, y*/
+		int coups, victoire = 0, dif = 9; /*victoire = 1, il a gagne*/
+		char** grille = NULL;
+		char** g2; /*LOT D*/
+		char c, tmp;
+
 		/*Effacement du ecran*/
 		system("clear");
 
@@ -140,10 +138,15 @@ int main()
 		{
 			printf("\n Vous avez gagne! =) \n");
 		}
+		int o, t;
+		for(o=0;o<largeur;o++)
+			for(t=0;t<largeur;t++)
+				grille[o][t]='a';
 		faire_liberation_matrice(largeur, grille);
         faire_liberation_matrice(largeur, g2);
 		/*Attendre quelque case pour recommencer le jeu*/
 		__fpurge(stdin);
+
 		scanf("%c", &c);
 
 	}while(1);
